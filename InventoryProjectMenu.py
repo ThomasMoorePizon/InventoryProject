@@ -26,7 +26,7 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		self.setWindowTitle('Inventory')
 
 		#Adjust the location and size of the Window
-		self.setGeometry(100, 100, 800, 400)
+		self.setGeometry(100, 100, 400, 100)
 
 		#Create the Menu Bar and use the local Menu
 		menu_bar = self.menuBar()
@@ -68,6 +68,11 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		opentable_action.triggered.connect(self.opentableCall)
 		table_menu.addAction(opentable_action)
 
+		#Delete Table
+		deltable_action = QtWidgets.QAction('Delete Table', self)
+		deltable_action.triggered.connect(self.deltableCall)
+		table_menu.addAction(deltable_action)
+
 		#Create Products Menu
 		table_menu = menu_bar.addMenu('Products')
 
@@ -76,10 +81,28 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		viewprod_action.triggered.connect(self.viewprodCall)
 		table_menu.addAction(viewprod_action)
 
-		#Add Products to a Table
-		addprod_action = QtWidgets.QAction('Add Products to Table', self)
+		#Add Product to a Table
+		addprod_action = QtWidgets.QAction('Add Product to Table', self)
 		addprod_action.triggered.connect(self.addprodCall)
 		table_menu.addAction(addprod_action)
+
+		#Delete Product from a Table
+		delprod_action = QtWidgets.QAction('Delete Products from a Table', self)
+		delprod_action.triggered.connect(self.delprodCall)
+		table_menu.addAction(delprod_action)
+
+		#Create Inventory Menu
+		table_menu = menu_bar.addMenu('Inventory')
+
+		#View Products in Table
+		viewinv_action = QtWidgets.QAction('View Inventory in Table', self)
+		viewinv_action.triggered.connect(self.viewinvCall)
+		table_menu.addAction(viewinv_action)
+
+		#Update Inventory of a Product
+		upinv_action = QtWidgets.QAction('Update Inventory of a Product', self)
+		upinv_action.triggered.connect(self.upinvCall)
+		table_menu.addAction(upinv_action)
 
 		#Show the Window
 		self.show()
@@ -141,8 +164,20 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		#Create Input Dialog for Name of Table
 		tablename, okPressed= QtWidgets.QInputDialog.getText(self, dbname, "Input the name of the table that you want to open", QtWidgets.QLineEdit.Normal,"")
 		if okPressed and tablename !='':
-			#Calls our Database Function to create a new table in the currently open database
+			#Calls our Database Function to open a table in the currently open database
 			sql_opentable(dbname, tablename)	
+
+	def deltableCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+
+		#Create Input Dialog for Name of Table
+		deltablename, okPressed= QtWidgets.QInputDialog.getText(self, dbname, "Input the name of the table that you want to delete", QtWidgets.QLineEdit.Normal,"")
+		if okPressed and deltablename !='':
+			#Calls our Database Function to open a table in the currently open database
+			sql_deltable(dbname, deltablename)	
+
 
 	def addprodCall(self):
 
@@ -155,7 +190,7 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		#Create Input Dialog for Name of the Product
 		prodname, okPressed= QtWidgets.QInputDialog.getText(self, dbname + tablename, "productname", QtWidgets.QLineEdit.Normal,"")
 		if okPressed and prodname !='':
-			#Calls our Database Function to create a new table in the currently open database
+			#Calls our Database Function to add a product in the currently open table
 			sql_createprod(dbname, tablename, prodname)
 
 	def viewprodCall(self):
@@ -167,3 +202,49 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		global tablename
 
 		sql_viewall(dbname, tablename)
+
+	def delprodCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+		
+		#Make use of the global table name variable
+		global tablename
+
+		#Create Input Dialog for Name of the Product
+		prodname, okPressed= QtWidgets.QInputDialog.getText(self, dbname + tablename, "productname", QtWidgets.QLineEdit.Normal,"")
+		if okPressed and prodname !='':
+			#Calls our Database Function to delete a product in the currently open table
+			sql_delprod(dbname, tablename, prodname)
+
+	def viewinvCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+		
+		#Make use of the global table name variable
+		global tablename
+
+		sql_viewall(dbname, tablename)
+
+	def upinvCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+		
+		#Make use of the global table name variable
+		global tablename
+
+		#Create Input Dialog for Name of the Product
+		prodname, okPressed= QtWidgets.QInputDialog.getText(self, dbname + tablename, "productname", QtWidgets.QLineEdit.Normal,"")
+		if okPressed and prodname !='':
+
+			#Create Input Dialog for the Inventory Count
+			qty, okPressed= QtWidgets.QInputDialog.getText(self, dbname + tablename, "inventory count", QtWidgets.QLineEdit.Normal,"")
+			if okPressed and prodname !='':
+
+				#Calls our Database Function to delete a product in the currently open table
+				sql_upinv(dbname, tablename, prodname, qty)
+
+
+

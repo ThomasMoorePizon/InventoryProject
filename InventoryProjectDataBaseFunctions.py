@@ -101,6 +101,32 @@ def sql_opentable(dbname, tablename):
 	con.commit()
 	con.close()
 
+def sql_deltable(dbname, deltablename):
+	
+	path = dbfolder + dbname
+
+	try:
+
+		#Open a connection to the database and creates one if there is none
+		con = sqlite3.connect(path)
+		cursor = con.cursor()
+		
+		#See if the table exists
+		tableselect ="SELECT count(name) FROM sqlite_master WHERE type='table' AND name=\'" + deltablename + "\'"
+		cursor.execute(tableselect)
+
+		#If the count is 1, then the table exists
+		if cursor.fetchone()[0]==1 :
+			droptablecommand = "DROP TABLE " + deltablename
+			cursor.execute(droptablecommand)
+		else :
+			print('Error - Table does not exist')
+	except Error:
+		print(Error)
+	
+	con.commit()
+	con.close()
+
 def sql_createprod(dbname, tablename, prodname):
 
 	path = dbfolder + dbname
@@ -150,6 +176,60 @@ def sql_viewall(dbname, tablename):
 			for row in rows:
 				print(row)
 
+		else :
+			print('Error - Table does not exist')
+
+	except Error:
+		print(Error)
+	
+	con.commit()
+	con.close()
+
+def sql_delprod(dbname, tablename, prodname):
+
+	path = dbfolder + dbname
+
+	try:
+
+		#Open a connection to the database and creates one if there is none
+		con = sqlite3.connect(path)
+		cursor = con.cursor()
+		
+		#See if the table exists
+		tableselect ="SELECT count(name) FROM sqlite_master WHERE type='table' AND name=\'" + tablename + "\'"
+		cursor.execute(tableselect)
+
+		#If the count is 1, then the table exists
+		if cursor.fetchone()[0]==1 :
+			deletecommand ="DELETE from " + tablename + " where product_name =\"" + prodname + "\""
+			cursor.execute(deletecommand)
+		else :
+			print('Error - Table does not exist')
+
+	except Error:
+		print(Error)
+	
+	con.commit()
+	con.close()
+
+def sql_upinv(dbname, tablename, prodname, qty):
+
+	path = dbfolder + dbname
+
+	try:
+
+		#Open a connection to the database and creates one if there is none
+		con = sqlite3.connect(path)
+		cursor = con.cursor()
+		
+		#See if the table exists
+		tableselect ="SELECT count(name) FROM sqlite_master WHERE type='table' AND name=\'" + tablename + "\'"
+		cursor.execute(tableselect)
+
+		#If the count is 1, then the table exists
+		if cursor.fetchone()[0]==1 :
+			updatecommand ="UPDATE " + tablename + " SET product_qty = " + qty + " where product_name = \""  + prodname + "\""
+			cursor.execute(updatecommand)
 		else :
 			print('Error - Table does not exist')
 
