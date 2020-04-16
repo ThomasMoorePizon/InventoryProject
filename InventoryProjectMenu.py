@@ -3,6 +3,10 @@
 #Needed for graphically widows
 from PyQt5 import QtWidgets, QtCore, QtGui
 
+#Global database name variable set to the Test database
+dbname = 'Test.db'
+tablename = 'TestTable'
+
 #Database Functions
 from InventoryProjectDataBaseFunctions import *
 
@@ -46,25 +50,120 @@ class InventoryWindow(QtWidgets.QMainWindow):
 		exit_action.triggered.connect(QtWidgets.qApp.quit)
 		file_menu.addAction(exit_action)
 
+		#Create Table Menu
+		table_menu = menu_bar.addMenu('Tables')
+
+		#View Tables
+		viewtables_action = QtWidgets.QAction('View Tables', self)
+		viewtables_action.triggered.connect(self.viewtablesCall)
+		table_menu.addAction(viewtables_action)
+
+		#Create Table
+		createtable_action = QtWidgets.QAction('Create Table', self)
+		createtable_action.triggered.connect(self.createtableCall)
+		table_menu.addAction(createtable_action)
+
+		#Open Table
+		opentable_action = QtWidgets.QAction('Open Table', self)
+		opentable_action.triggered.connect(self.opentableCall)
+		table_menu.addAction(opentable_action)
+
+		#Create Products Menu
+		table_menu = menu_bar.addMenu('Products')
+
+		#View Products in Table
+		viewprod_action = QtWidgets.QAction('View Products in Table', self)
+		viewprod_action.triggered.connect(self.viewprodCall)
+		table_menu.addAction(viewprod_action)
+
+		#Add Products to a Table
+		addprod_action = QtWidgets.QAction('Add Products to Table', self)
+		addprod_action.triggered.connect(self.addprodCall)
+		table_menu.addAction(addprod_action)
+
 		#Show the Window
 		self.show()
 
+
 	def newdbCall(self):
-		
+
+		#Make use of the global database name variable		
+		global dbname
+
 		#Create Input Dialog for Name of Database
-		dbname, okPressed= QtWidgets.QInputDialog.getText(self, "Database Name", "Databasename.db", QtWidgets.QLineEdit.Normal,"")
+		dbname, okPressed= QtWidgets.QInputDialog.getText(self, "Database Name Form", "Databasename.db", QtWidgets.QLineEdit.Normal,"")
 		if okPressed and dbname !='':
 			#Calls our Database Function to Creates a new database named dbname
 			sql_connection(dbname)
+
 
 	def opendbCall(self):
 		
+		#Make use of the global database name variable
+		global dbname
+
 		#Create Input Dialog for Name of Database
-		dbname, okPressed= QtWidgets.QInputDialog.getText(self, "Database Name", "Databasename.db", QtWidgets.QLineEdit.Normal,"")
+		dbname, okPressed= QtWidgets.QInputDialog.getText(self, "Database Name Form", "Databasename.db", QtWidgets.QLineEdit.Normal,"")
 		if okPressed and dbname !='':
 			#Calls our Database Function to Creates a new database named dbname
 			sql_connection(dbname)
 
+	def viewtablesCall(self):
 
+		#Make use of the global database name variable
+		global dbname
 
+		#Calls our Database Function which displays the table list to the command window
+		sql_viewtables(dbname)
 
+	def createtableCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+		
+		#Make use of the global table name variable
+		global tablename		
+
+		#Create Input Dialog for Name of Table
+		tablename, okPressed= QtWidgets.QInputDialog.getText(self, dbname, "Input the name of the table that you want to create", QtWidgets.QLineEdit.Normal,"")
+		if okPressed and tablename !='':
+			#Calls our Database Function to create a new table in the currently open database
+			sql_createtable(dbname, tablename)
+
+	def opentableCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+
+		#Make use of the global table name variable
+		global tablename
+
+		#Create Input Dialog for Name of Table
+		tablename, okPressed= QtWidgets.QInputDialog.getText(self, dbname, "Input the name of the table that you want to open", QtWidgets.QLineEdit.Normal,"")
+		if okPressed and tablename !='':
+			#Calls our Database Function to create a new table in the currently open database
+			sql_opentable(dbname, tablename)	
+
+	def addprodCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+		
+		#Make use of the global table name variable
+		global tablename
+
+		#Create Input Dialog for Name of the Product
+		prodname, okPressed= QtWidgets.QInputDialog.getText(self, dbname + tablename, "productname", QtWidgets.QLineEdit.Normal,"")
+		if okPressed and prodname !='':
+			#Calls our Database Function to create a new table in the currently open database
+			sql_createprod(dbname, tablename, prodname)
+
+	def viewprodCall(self):
+
+		#Make use of the global database name variable
+		global dbname
+		
+		#Make use of the global table name variable
+		global tablename
+
+		sql_viewall(dbname, tablename)
